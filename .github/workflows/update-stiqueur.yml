@@ -31,4 +31,4 @@ jobs:
             ${{ secrets.CADDYENDPOINT }} \
             -X PATCH \
             -H "Content-Type: application/json" \
-            -d "${{steps.read-link.outputs.qr-link}}"
+            -d '${{steps.read-link.outputs.qr-link}}'
