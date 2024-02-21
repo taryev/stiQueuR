@@ -1,0 +1,33 @@
+name: update-stiqueur
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Read link.txt content
+        run: |
+          qr_link=$(cat link.txt)
+          echo "::set-output name=qr_link::$qr_link"
+
+      - name: Update Caddy configuration using API
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+
+          script: |
+            curl \
+            ${{ secrets.CADDYENDPOINT }} \
+            -X PATCH \
+            -H "Content-Type: application/json" \
+            -d '$qr_link'
