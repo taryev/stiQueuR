@@ -12,10 +12,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
 
-      - name: Read link.txt content
+      - id: read-link
+        name: Read link.txt content
         run: |
-          qr_link=$(cat link.txt)
-          echo "::set-output name=qr_link::$qr_link"
+          link=$(cat link.txt)
+          echo "qr-link=$link" >> "$GITHUB_OUTPUT"
 
       - name: Update Caddy configuration using API
         uses: appleboy/ssh-action@v1.0.3
@@ -30,4 +31,4 @@ jobs:
             ${{ secrets.CADDYENDPOINT }} \
             -X PATCH \
             -H "Content-Type: application/json" \
-            -d '$qr_link'
+            -d "${{steps.read-link.outputs.qr-link}}"
